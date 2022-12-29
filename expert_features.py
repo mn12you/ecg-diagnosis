@@ -32,13 +32,13 @@ def extract_lead_heart_rate(signal, sampling_rate):
     return list(heartrates / 100) # divided by 100
 
 
-def extract_heart_rates(ecg_data, sampling_rate=500):
-    # extract heart rates using 12-lead since rpeaks can not be detected on some leads
-    heartrates = []
-    for signal in ecg_data.T:
-        lead_heartrates = extract_lead_heart_rate(signal=signal, sampling_rate=sampling_rate)
-        heartrates += lead_heartrates
-    return cal_statistics(heartrates)
+# def extract_heart_rates(ecg_data, sampling_rate=500):
+#     # extract heart rates using 12-lead since rpeaks can not be detected on some leads
+#     heartrates = []
+#     for signal in ecg_data.T:
+#         lead_heartrates = extract_lead_heart_rate(signal=signal, sampling_rate=sampling_rate)
+#         heartrates += lead_heartrates
+#     return cal_statistics(heartrates)
 
 
 def extract_lead_features(signal):
@@ -51,12 +51,19 @@ def extract_lead_features(signal):
     return lead_features
 
    
-def extract_features(ecg_data, sampling_rate=500):
-    # extract expert features for 12-lead ECGs
-    # may include heart rates later
-    all_features = []
-    # comment out below line to extract heart rates
-    # all_features += extract_heart_rates(ecg_data, sampling_rate=sampling_rate)
+# def extract_features(ecg_data, sampling_rate=500):
+#     # extract expert features for 12-lead ECGs
+#     # may include heart rates later
+#     all_features = []
+#     # comment out below line to extract heart rates
+#     # all_features += extract_heart_rates(ecg_data, sampling_rate=sampling_rate)
+#     for signal in ecg_data.T:
+#         all_features += extract_lead_features(signal)
+#     return all_features
+
+def extract(ecg_data, sampling_rate=500):
+    all=[]
     for signal in ecg_data.T:
-        all_features += extract_lead_features(signal)
-    return all_features
+        all+=extract_lead(signal,sampling_rate))
+    return all
+
