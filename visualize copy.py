@@ -5,14 +5,26 @@ from glob import glob
 import matplotlib.pyplot as plt
 import wfdb
 from tqdm import tqdm
+from Classes import Visualize
 
-class visualize():
+class visualize(Visualize):
     
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('--record-paths', type=str, default='data/CPSC/A0010.mat', help='Path to .mat file')
         args = self.parser.parse_args()
         self.recordpaths = glob(args.record_paths)
+        
+    def __call__(self):
+        for mat_file in tqdm(self.recordpaths):
+            if mat_file.endswith('.mat') or mat_file.endswith('.hea'):
+                mat_file = mat_file[:-4]
+            patient_id = os.path.basename(mat_file)
+            ecg_data, meta_data = wfdb.rdsamp(mat_file)
+            leads = meta_data['sig_name']
+            self.plot_ecg(leads=leads, data=ecg_data.T, title=os.path.basename(mat_file),n_cols=1)
+            self.plot_ecg(leads=leads, data=ecg_data.T, title=os.path.basename(mat_file),n_cols=2)
+
 
     def plot_ecg(leads, data, title,n_cols):
         n_rows = len(leads) // n_cols
@@ -29,13 +41,3 @@ class visualize():
                 axs[j, i].set_ylim(ymin=-yabs_max, ymax=yabs_max)
         plt.savefig(f'imgs/{title}-{n_cols}.png')
         plt.close(f)
-
-    def plot_all(self):
-        for mat_file in tqdm(self.recordpaths):
-            if mat_file.endswith('.mat') or mat_file.endswith('.hea'):
-                mat_file = mat_file[:-4]
-            patient_id = os.path.basename(mat_file)
-            ecg_data, meta_data = wfdb.rdsamp(mat_file)
-            leads = meta_data['sig_name']
-            self.plot_ecg(leads=leads, data=ecg_data.T, title=os.path.basename(mat_file),n_cols=1)
-            self.plot_ecg(leads=leads, data=ecg_data.T, title=os.path.basename(mat_file),n_cols=2)
